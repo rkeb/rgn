@@ -82,6 +82,6 @@ def dict_to_init(dict_, seed=None, dtype=tf.float32):
 def dict_to_inits(dict_, seed=None, dtype=tf.float32):
     """ Accepts a dict of dicts, each of which contains a canonical config for an initializer. """
 
-    inits = {k: dict_to_init(v, seed, dtype) for k, v in dict_.iteritems()}
+    inits = {k: dict_to_init(v, seed, dtype) for k, v in dict_.items()}
 
     return inits

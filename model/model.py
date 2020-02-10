@@ -26,7 +26,7 @@ from net_ops import *
 from utils import *
 from glob import glob
 from copy import deepcopy
-from itertools import izip_longest
+from itertools import zip_longest
 
 # Public interface
 
@@ -220,7 +220,7 @@ class RGNModel(object):
                 filters = {grp: id_filter(ids, grp) for grp in config.io['evaluation_sub_groups']} if mode == 'evaluation' else {}
                 filters.update({'all': tf.tile([True], tf.shape(ids))})
 
-                for group_id, group_filter in filters.iteritems():
+                for group_id, group_filter in filters.items():
                     with tf.variable_scope(group_id):
                         # Tertiary loss
                         effective_tertiary_loss = 0.
@@ -514,7 +514,7 @@ def _device_function_constructor(functions_on_devices={}, default_device=''):
 
     def device_function(op):
         # note that one can't depend on ordering of items in dicts due to their indeterminancy
-        for device, funcs in functions_on_devices.iteritems():
+        for device, funcs in functions_on_devices.items():
             if any(((func in op.name) or any(func in node.name for node in op.inputs)) for func in funcs):
                 return device
         else:
@@ -694,9 +694,10 @@ def _higher_recurrence(mode, config, inputs, num_stepss, alphabet=None):
 
                 # residual connections (only for recurrent outputs; other outputs are maintained but not wired in a residual manner)
                 # all recurrent layer sizes must be the same
-                if (residual_n >= 1) and ((layer_idx - residual_shift) % residual_n == 0) and (layer_idx >= residual_n + residual_shift):  
-                    layer_recurrent_outputs = layer_recurrent_outputs + layers_recurrent_outputs[-residual_n]
-                    print('residually wired layer ' + str(layer_idx - residual_n + 1) + ' to layer ' + str(layer_idx + 1))
+                if residual_n is not None:
+                    if (residual_n >= 1) and ((layer_idx - residual_shift) % residual_n == 0) and (int(layer_idx) >= residual_n + residual_shift):  
+                        layer_recurrent_outputs = layer_recurrent_outputs + layers_recurrent_outputs[-residual_n]
+                        print('residually wired layer ' + str(layer_idx - residual_n + 1) + ' to layer ' + str(layer_idx + 1))
 
                 # add to list of recurrent layers' outputs (needed for residual connection and some skip connections)
                 layers_recurrent_outputs.append(layer_recurrent_outputs)
@@ -1106,7 +1107,7 @@ def _training(config, loss):
                       'momentum': tf.train.MomentumOptimizer,
                       'adagrad': tf.train.AdagradOptimizer,
                       'adadelta': tf.train.AdadeltaOptimizer}[config['optimizer']]
-    optimizer_params = config.viewkeys() & set(optimizer_args(optimizer_func))
+    optimizer_params = config.keys() & set(optimizer_args(optimizer_func))
     optimizer_params_and_values = {param: config[param] for param in optimizer_params}
     optimizer = optimizer_func(**optimizer_params_and_values)
 

@@ -478,7 +478,7 @@ def loop(args):
                 old_seed = configs['training'].initialization['graph_seed']
                 new_seed = old_seed + args.seed_increment
                 for line in fileinput.input(args.config_file, inplace=True):
-                    print line.replace('randSeed ' + str(old_seed), 'randSeed ' + str(new_seed)),
+                    print(line.replace('randSeed ' + str(old_seed), 'randSeed ' + str(new_seed))),
                 
                 restart = True
             else:
